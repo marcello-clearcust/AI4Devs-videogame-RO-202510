@@ -32,6 +32,12 @@ let state = {
     sounds: {} // Cache for Howl objects
 };
 
+// Cleanup on unload
+window.addEventListener('beforeunload', () => {
+    Howler.unload();
+    state.sounds = {};
+});
+
 // DOM Elements
 const elements = {
     score: document.getElementById('score-display'),
@@ -150,15 +156,20 @@ function playTargetSound() {
 
     const soundPath = `${config.paths.sounds}${state.currentRound.target}.mp3`;
     
-    // Create or reuse Howl instance
-    const sound = new Howl({
-        src: [soundPath],
-        html5: true, // Forces HTML5 Audio to support large files/streaming better if needed
-        onloaderror: (id, err) => {
-            console.error('Sound load error:', err);
-            alert(`Sound file missing: ${soundPath}. Please ensure assets are in place.`);
-        }
-    });
+    // Reuse cached sound or create new one
+    let sound = state.sounds[state.currentRound.target];
+    
+    if (!sound) {
+        sound = new Howl({
+            src: [soundPath],
+            html5: true, // Forces HTML5 Audio to support large files/streaming better if needed
+            onloaderror: (id, err) => {
+                console.error('Sound load error:', err);
+                showFeedback('Sound missing!', 'text-red-600');
+            }
+        });
+        state.sounds[state.currentRound.target] = sound;
+    }
     
     sound.play();
 }

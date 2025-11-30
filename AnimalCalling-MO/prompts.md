@@ -34,6 +34,11 @@ A comprehensive plan was created and approved, outlining:
   - Mapped animals to their Unicode emoji equivalents (e.g., Donkey -> 1facf).
   - Downloaded images directly to `assets/images/`.
 
+### 5. Optimization & Security
+- **SRI Hashes:** Calculated and added Subresource Integrity (SRI) hashes to all CDN scripts (Tailwind, Howler, Confetti) to prevent security vulnerabilities.
+- **Audio Caching:** Optimized `game.js` to reuse `Howl` instances instead of creating new ones every round, preventing memory leaks.
+- **Cleanup:** Implemented resource disposal logic (`Howler.unload`) when the page unloads.
+
 ## Challenges & Solutions
 - **Asset Management:** Since the actual assets are user-provided, the code includes error handling (`onerror` for images, `onloaderror` for sounds) to prevent the game from breaking if files are missing.
 - **Browser Policies:** Modern browsers block auto-playing audio. The design solves this by requiring an explicit "Click to Listen" interaction to start the audio for each round.
@@ -97,4 +102,56 @@ Test Animal Calling it in browser
 It works fine. Complete the @AnimalCalling-MO/prompts.md file adding a complete list of my prompts, exactly as I have wrote them, no summary, no trunk.
 
 Put a brief description and the list of the prompts at the end of the file.
+```
+
+**Prompt 7:**
+```text
+To deliver the excercise, create a branch called "solved-videogame", commit and create a pull request as described at point 6 of the @README.md file
+```
+
+**Prompt 8:**
+```text
+Create the pull request as suggested
+```
+
+**Prompt 9:**
+```text
+External scripts from CDN endpoints lack SRI attributes, leaving the page vulnerable to CDN compromise or man-in-the-middle attacks. Add SRI hashes to the following resources:
+
+https://cdn.tailwindcss.com (lines 9)
+
+https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.4/howler.min.js (line 15)
+
+https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js (line 16)
+
+Generate SRI hashes for each resource and add them as the integrity attribute on each <script> or <link> tag.
+```
+
+**Prompt 10:**
+```text
+In AnimalCalling-MO/js/game.js around lines 141 to 164, each playTargetSound
+
+call creates a new Howl instance causing potential memory/resource leaks; change
+
+this to reuse cached Howl objects by adding a sound cache (e.g.,
+
+state.soundCache or a module-level Map) keyed by the target soundPath, create a
+
+Howl only if not cached, store it, and call play() on the cached instance; also
+
+ensure errors call the in-game showFeedback function instead of alert and, on
+
+any permanent unload scenario, call howl.unload() or Map.clear() to free
+
+resources.
+```
+
+**Prompt 11:**
+```text
+test in browser if everything works fine after these changes
+```
+
+**Prompt 12:**
+```text
+update the @prompts.md file
 ```
