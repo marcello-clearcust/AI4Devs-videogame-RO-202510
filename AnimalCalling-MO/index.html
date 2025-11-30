@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Animal Calling - Sound Quiz</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/styles.css">
+    
+    <!-- Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.4/howler.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+</head>
+<body class="bg-gradient-to-b from-blue-200 to-green-100 min-h-screen font-sans select-none">
+
+    <!-- Game Container -->
+    <div id="game-app" class="container mx-auto px-4 py-8 max-w-4xl flex flex-col min-h-screen">
+        
+        <!-- Header -->
+        <header class="flex justify-between items-center bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg mb-8">
+            <div class="flex items-center gap-4">
+                <div class="bg-yellow-400 p-3 rounded-full shadow-md">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z" />
+                    </svg>
+                </div>
+                <h1 class="text-2xl md:text-3xl font-bold text-gray-800">Animal Calling</h1>
+            </div>
+            
+            <div class="flex items-center gap-6">
+                <!-- Score -->
+                <div class="flex flex-col items-end">
+                    <span class="text-xs font-bold text-gray-500 uppercase tracking-wider">Score</span>
+                    <span id="score-display" class="text-2xl font-black text-blue-600">0</span>
+                </div>
+                <!-- Lives -->
+                <div class="flex gap-1" id="lives-display">
+                    <svg class="w-8 h-8 text-red-500 fill-current" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+                    <svg class="w-8 h-8 text-red-500 fill-current" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+                    <svg class="w-8 h-8 text-red-500 fill-current" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Game Area -->
+        <main class="flex-grow flex flex-col items-center justify-center gap-8 relative">
+            
+            <!-- Play Sound Button -->
+            <button id="play-sound-btn" class="group relative w-32 h-32 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full shadow-xl hover:scale-105 hover:shadow-2xl transition-all duration-300 flex items-center justify-center z-10 ring-4 ring-white/30">
+                <span class="absolute w-full h-full rounded-full bg-white opacity-0 group-hover:animate-ping"></span>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-white drop-shadow-md group-hover:scale-110 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span class="absolute -bottom-10 font-bold text-gray-600 bg-white/80 px-3 py-1 rounded-full text-sm backdrop-blur-sm shadow-sm">Click to Listen</span>
+            </button>
+
+            <!-- Options Grid -->
+            <div id="options-grid" class="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-5xl mt-8">
+                <!-- Cards will be injected here -->
+                <!-- Example Template (Hidden) -->
+                 <div class="animal-card bg-white p-4 rounded-2xl shadow-lg cursor-pointer hover:scale-105 transition-all duration-300 border-4 border-transparent hover:border-blue-400 group">
+                    <div class="aspect-square rounded-xl overflow-hidden bg-gray-100 relative">
+                        <img src="" alt="Animal" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Round Message/Feedback -->
+            <div id="feedback-msg" class="h-8 text-xl font-bold text-center transition-opacity duration-300 opacity-0">
+                <!-- Correct! / Try Again -->
+            </div>
+
+        </main>
+
+        <!-- Footer -->
+        <footer class="mt-12 text-center text-gray-500 text-sm py-4">
+            <p>Listen closely to the sound and pick the matching animal!</p>
+            <p class="mt-2 opacity-60">Created for AI4Devs Exercise</p>
+        </footer>
+
+    </div>
+
+    <!-- Game Over Modal -->
+    <div id="game-over-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm hidden opacity-0 transition-opacity duration-300">
+        <div class="bg-white rounded-3xl p-8 max-w-md w-full mx-4 shadow-2xl transform scale-95 transition-transform duration-300" id="modal-content">
+            <div class="text-center">
+                <div class="inline-block p-4 rounded-full bg-red-100 mb-4">
+                    <svg class="w-12 h-12 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </div>
+                <h2 class="text-3xl font-bold text-gray-900 mb-2">Game Over!</h2>
+                <p class="text-gray-600 mb-6">You ran out of lives.</p>
+                
+                <div class="bg-gray-50 rounded-xl p-6 mb-8 border border-gray-100">
+                    <p class="text-sm text-gray-500 uppercase tracking-wider mb-1">Final Score</p>
+                    <p id="final-score" class="text-5xl font-black text-blue-600">0</p>
+                </div>
+
+                <button id="restart-btn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-6 rounded-xl transition-colors shadow-lg hover:shadow-xl flex items-center justify-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                    </svg>
+                    Play Again
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/game.js"></script>
+</body>
+</html>
