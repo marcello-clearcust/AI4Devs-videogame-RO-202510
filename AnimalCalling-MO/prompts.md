@@ -38,6 +38,7 @@ A comprehensive plan was created and approved, outlining:
 - **SRI Hashes:** Calculated and added Subresource Integrity (SRI) hashes to all CDN scripts (Tailwind, Howler, Confetti) to prevent security vulnerabilities.
 - **Audio Caching:** Optimized `game.js` to reuse `Howl` instances instead of creating new ones every round, preventing memory leaks.
 - **Cleanup:** Implemented resource disposal logic (`Howler.unload`) when the page unloads.
+- **DOM Manipulation:** Refactored `onerror` image handling to use `document.createElement` for better performance and security compared to `innerHTML`.
 
 ## Challenges & Solutions
 - **Asset Management:** Since the actual assets are user-provided, the code includes error handling (`onerror` for images, `onloaderror` for sounds) to prevent the game from breaking if files are missing.
@@ -154,4 +155,35 @@ test in browser if everything works fine after these changes
 **Prompt 12:**
 ```text
 update the @prompts.md file
+```
+
+**Prompt 13:**
+```text
+commit changes
+```
+
+**Prompt 14:**
+```text
+In AnimalCalling-MO/js/game.js around lines 131 to 135, the onerror handler
+
+currently uses imgContainer.innerHTML += which re-parses and replaces the
+
+container DOM (dropping the hidden img and possibly recreating the broken-image
+
+element); change the handler to hide or remove the broken img and instead create
+
+a fallback DIV via DOM APIs (document.createElement), set its className and
+
+textContent to the animal name, and append it with imgContainer.appendChild;
+
+also guard against adding duplicate fallback nodes (check for an existing
+
+fallback selector) so the fallback is only added once.
+
+Test in browser after changes
+```
+
+**Prompt 15:**
+```text
+update @AnimalCalling-MO/prompts.md and commit changes
 ```
